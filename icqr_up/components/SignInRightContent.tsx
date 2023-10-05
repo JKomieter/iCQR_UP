@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { Checkbox } from "@mui/material";
 import { addDoc, collection, getDocs, limit, query } from "firebase/firestore";
 import { db } from "@/firebase/config";
-import { SignOutType, SignUpType } from "@/types";
+import { SignOutType, SignUpType, timeStampType } from "@/types";
 import UserInfo from "./UserInfo";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -28,6 +28,8 @@ const SignInRightContent = ({
     setCheckVr,
     checked,
     setChecked,
+    latestTabletTime,
+    latestVRTime,
 }: {
     email: string;
     setEmail: React.Dispatch<React.SetStateAction<string>>;
@@ -45,8 +47,10 @@ const SignInRightContent = ({
     setCheckVr: React.Dispatch<React.SetStateAction<boolean>>;
     checked: boolean;
     setChecked: React.Dispatch<React.SetStateAction<boolean>>;
+    latestTabletTime: timeStampType;
+    latestVRTime: timeStampType;
 }) => {
-
+    
 
     return (
         <>
@@ -70,15 +74,17 @@ const SignInRightContent = ({
                 setCheckTablet={setCheckTablet}
                 checkVr={checkVr}
                 setCheckVr={setCheckVr}
+                latestTabletTime={latestTabletTime}
+                latestVRTime={latestVRTime}
             />
             <div className="w-full text-xs md:text-sm">
                 <Checkbox
-                    defaultChecked
+                    defaultChecked={false}
                     color="primary"
                     value={checked}
                     onChange={(e) => setChecked(e.target.checked)}
                 />
-                By checking this you agree to our <a href="#" className="text-blue-700">Terms and Conditions</a>
+                By checking this you agree to take full responsibility for the care and safekeeping of the device during the borrowing period.
             </div>
         </>
     )

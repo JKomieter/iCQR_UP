@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import SignInRightContent from "./SignInRightContent";
 import { db } from "@/firebase/config";
-import { SignOutType, SignUpType } from "@/types";
+import { SignOutType, SignUpType, timeStampType } from "@/types";
 import { collection, query, limit, getDocs, addDoc, where } from "firebase/firestore";
 import { toast } from "react-toastify";
 import SignOutRightContent from "./SignOutRightContent";
@@ -19,8 +19,26 @@ const MainContent = () => {
     const [checkVr, setCheckVr] = useState(false);
     const [signOutVR, setSignOutVR] = useState<Boolean>(false);
     const [signOutTablet, setSignOutTablet] = useState<Boolean>(false);
+const [latestTabletTime, setLatestTabletTime] = useState<timeStampType>({seconds: 0, nanoseconds: 0});
+    const [latestVRTime, setLatestVRTime] = useState<timeStampType>({seconds: 0, nanoseconds: 0});
     const signOutCollectionRef = collection(db, "sign_outs");
     const signUpCollectionRef = collection(db, "sign_ups");
+
+
+    useEffect(() => {
+        const getLatestSignOut = async () => {
+            const q = query(signOutCollectionRef, limit(1));
+            const querySnapshot = await getDocs(q);
+            const latestSignOutDoc = querySnapshot.docs[0].data();
+
+            const { vr_stop_time, tablet_stop_time } = latestSignOutDoc as SignOutType;
+
+            setLatestVRTime(vr_stop_time);
+            setLatestTabletTime(tablet_stop_time);
+        }
+
+        getLatestSignOut();
+    }, [tabletTime, vrTime]);
 
 
     const handleSignOut = useCallback(async () => {
@@ -64,7 +82,7 @@ const MainContent = () => {
                 tablet_stop_time: new Date(),
                 vr_stop_time: new Date(),
                 agree: true,
-            } as SignOutType;
+            };
 
             await addDoc(signOutCollectionRef, sign_out_data);
             toast.done("Successfully signed out for devices. Check your email for confirmation");
@@ -79,9 +97,8 @@ const MainContent = () => {
             console.log(error);
             toast.error("Something went wrong");
         } finally {
-            setTimeout(() => {
-                toast.dismiss();
-            }, 3000);
+            toast.dismiss();
+            toast.success("Successfully signed out for devices. Check your email for confirmation");
         }
     };
 
@@ -100,13 +117,7 @@ const MainContent = () => {
 
     const checkIfAvailable = async () => {
         try {
-            const q = query(signOutCollectionRef, limit(1));
-            const querySnapshot = await getDocs(q);
-            const latestSignOutDoc = querySnapshot.docs[0].data() as SignOutType;
-
-            const { vr_stop_time: latestVrTime, tablet_stop_time: latestTabletTime } = latestSignOutDoc;
             // if the latest signout time is less than the requested signup time, then the device is available
-
             const sign_up_data = {
                 email,
                 full_name: fullName,
@@ -121,7 +132,7 @@ const MainContent = () => {
             let postItCount = 0;
 
             if (checkTablet) {
-                if (latestTabletTime < tabletTime) {
+                if (new Date(latestTabletTime.seconds * 1000 + latestTabletTime.nanoseconds / 1000000) < tabletTime) {
                     postItCount += 1;
                 } else {
                     toast.error("Tablet is not available at this time");
@@ -129,7 +140,7 @@ const MainContent = () => {
             }
 
             if (checkVr) {
-                if (latestVrTime < vrTime) {
+                if (new Date(latestVRTime.seconds * 1000 + latestVRTime.nanoseconds / 1000000) < vrTime) {
                     postItCount += 1;
                 } else {
                     toast.error("VR is not available at this time");
@@ -151,9 +162,8 @@ const MainContent = () => {
             toast.error("Something went wrong");
             console.log(error);
         } finally {
-            setTimeout(() => {
-                toast.dismiss();
-            }, 3000);
+            toast.dismiss();
+            toast.success("Successfully signed up for devices. Check your email for confirmation");
         }
     }
 
@@ -175,6 +185,8 @@ const MainContent = () => {
             setCheckVr={setCheckVr}
             checked={checked}
             setChecked={setChecked}
+            latestTabletTime={latestTabletTime}
+            latestVRTime={latestVRTime}
         />,
         "sign-out": <SignOutRightContent
             email={email}

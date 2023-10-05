@@ -1,5 +1,6 @@
 import VR from "./VR";
 import Tablet from "./Tablet";
+import { timeStampType } from "@/types";
 
 const Devices = ({
     vrTime,
@@ -10,6 +11,8 @@ const Devices = ({
     setCheckTablet,
     checkVr,
     setCheckVr,
+    latestTabletTime,
+    latestVRTime,
 }: {
     vrTime: Date;
     tabletTime: Date;
@@ -19,7 +22,10 @@ const Devices = ({
     setCheckTablet: React.Dispatch<React.SetStateAction<boolean>>;
     checkVr: boolean;
     setCheckVr: React.Dispatch<React.SetStateAction<boolean>>;
+    latestTabletTime: timeStampType;
+    latestVRTime: timeStampType;
 }) => {
+
     return (
         <div className="flex md:flex-row flex-col w-full items-center justify-center gap-5">
             <VR 
@@ -27,12 +33,14 @@ const Devices = ({
             setVrTime={setVrTime}
             checkVr={checkVr}
             setCheckVr={setCheckVr}
+            latestVRTime={latestVRTime}
             />
             <Tablet 
             tabletTime={tabletTime} 
             setTabletTime={setTabletTime}
             checkTablet={checkTablet}
             setCheckTablet={setCheckTablet}
+            latestTabletTIme={latestTabletTime}
             />
         </div>
     )

@@ -1,6 +1,8 @@
 import { Image } from "@nextui-org/react";
 import PickTime from "./PickTime";
 import { Checkbox } from "@mui/material";
+import { useMemo } from "react";
+import { timeStampType } from "@/types";
 
 
 
@@ -9,12 +11,24 @@ const VR = ({
     setVrTime,
     checkVr,
     setCheckVr,
+    latestVRTime,
 }: {
     vrTime: Date;
     setVrTime: React.Dispatch<React.SetStateAction<Date>>;
     checkVr: boolean;
     setCheckVr: React.Dispatch<React.SetStateAction<boolean>>;
+    latestVRTime: timeStampType;
 }) => {
+    const IsAvailable = useMemo(() => {
+        if (checkVr) {
+            if (new Date(latestVRTime.seconds * 1000 + latestVRTime.nanoseconds / 1000000) < vrTime) {
+                return <p className="text-xs md:text-sm text-green-600">VR is available</p>
+            } else {
+                return <p className="text-xs md:text-sm text-red-600">VR is not available</p>
+            }
+        }
+    }, [checkVr, latestVRTime, vrTime]);
+
     return (
         <div
             className="bg-white p-3 w-full rounded-lg shadow-md flex flex-row items-start gap-3"
@@ -34,7 +48,7 @@ const VR = ({
                     <Checkbox
                         value={checkVr}
                         onChange={(e) => setCheckVr(e.target.checked)}
-                        defaultChecked
+                        defaultChecked={false}
                         color="primary"
                     />
                 </div>
@@ -45,7 +59,7 @@ const VR = ({
                 deviceTime={vrTime}
                 setDeviceTime={setVrTime}
                 />
-                {/* <Available /> */}
+                {IsAvailable}
             </div>
         </div>
     )

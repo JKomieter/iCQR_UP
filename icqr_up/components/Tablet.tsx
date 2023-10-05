@@ -1,18 +1,32 @@
 import { Image } from "@nextui-org/react"
 import PickTime from "./PickTime"
 import { Checkbox } from "@mui/material";
+import { useMemo } from "react";
+import { timeStampType } from "@/types";
 
 const Tablet = ({
     tabletTime,
     setTabletTime,
     checkTablet,
     setCheckTablet,
+    latestTabletTIme,
 }: {
     tabletTime: Date;
     setTabletTime: React.Dispatch<React.SetStateAction<Date>>;
     checkTablet: boolean;
     setCheckTablet: React.Dispatch<React.SetStateAction<boolean>>;
+    latestTabletTIme: timeStampType;
 }) => {
+    const IsAvailable = () => {
+        if (checkTablet) {
+            if (new Date(latestTabletTIme.seconds * 1000 + latestTabletTIme.nanoseconds / 1000000) < tabletTime) {
+                return <p className="text-xs md:text-sm text-green-600">Tablet is available</p>
+            } else {
+                return <p className="text-xs md:text-sm text-red-600">Tablet is not available</p>
+            }
+        }
+    };
+
 
     return (
         <div
@@ -33,7 +47,7 @@ const Tablet = ({
                     <Checkbox
                         value={checkTablet}
                         onChange={(e) => setCheckTablet(e.target.checked)}
-                        defaultChecked
+                        defaultChecked={false}
                         color="primary"
                     />
                 </div>
@@ -44,7 +58,7 @@ const Tablet = ({
                     deviceTime={tabletTime}
                     setDeviceTime={setTabletTime}
                  />
-                {/* <Available /> */}
+                <IsAvailable />
             </div>
         </div>
     )

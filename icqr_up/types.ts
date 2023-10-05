@@ -11,6 +11,10 @@ export type SignUpType = {
     agree: boolean;
 }
 
+export type timeStampType = {
+    seconds: number;
+    nanoseconds: number;
+};
 
 export type SignOutType = {
     email: string;
@@ -18,7 +22,7 @@ export type SignOutType = {
     student_id: string;
     tablet: boolean;
     vr: boolean;
-    tablet_stop_time: Date;
-    vr_stop_time: Date;
+    tablet_stop_time: timeStampType;
+    vr_stop_time: timeStampType;
     agree: boolean;
 }
