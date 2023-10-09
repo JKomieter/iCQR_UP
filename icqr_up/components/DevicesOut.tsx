@@ -20,7 +20,7 @@ const DevicesOut = ({
             </h4>
             <div className="flex md:flex-row flex-col w-full items-center justify-center gap-5">
                 <div
-                    className="bg-white p-3 w-full rounded-lg shadow-md flex flex-row items-center gap-3"
+                    className="bg-white p-3 w-full h-full rounded-lg shadow-md flex flex-row items-center gap-3 border-2 border-neutral-200"
                 >
                     <div className="h-full">
                         <Image
@@ -34,14 +34,18 @@ const DevicesOut = ({
                     <div className="w-full">
                         <div 
                         onClick={() => setSignOutVR(!signOutVR)}
-                            className={`p-4 rounded-2xl ${signOutVR ? "bg-red-200" : "bg-blue-200"} cursor-pointer w-full flex flex-row gap-2 items-center duration-200 transition-all`}>
-                            <HiLogout size={35} />
-                            <p className="text-sm font-semibold text-neutral-600">Click to sign out VR</p>
+                            className={`p-4 rounded-2xl ${signOutVR ? "bg-red-500" : "bg-blue-500"} cursor-pointer w-full flex flex-row gap-2 items-center duration-300 transition-all`}>
+                            <HiLogout size={35} color="white" />
+                            {
+                                signOutVR ? 
+                                <p className="text-sm font-semibold text-neutral-100">VR signed out.</p>
+                                : <p className="text-sm font-semibold text-neutral-100">Click to sign out VR</p>
+                            }
                         </div>
                     </div>
                 </div>
                 <div
-                    className="bg-white p-3 w-full rounded-lg shadow-md flex flex-row items-center gap-3"
+                    className="bg-white p-3 w-full h-full rounded-lg shadow-md flex flex-row items-center gap-3 border-2 border-neutral-200"
                 >
                     <div className=" h-full">
                         <Image
@@ -55,9 +59,13 @@ const DevicesOut = ({
                     <div className="w-full">
                         <div 
                         onClick={() => setSignOutTablet(!signOutTablet)}
-                            className={`p-4 rounded-2xl ${signOutTablet ? "bg-red-200" : "bg-blue-200"} cursor-pointer w-full flex flex-row gap-2 items-center duration-200 transition-all`}>
-                            <HiLogout size={35} />
-                            <p className="text-sm font-semibold text-neutral-600">Click to sign out Tablet</p>
+                            className={`p-4 rounded-2xl ${signOutTablet ? "bg-red-500" : "bg-blue-500"} cursor-pointer w-full flex flex-row gap-2 items-center duration-300 transition-all`}>
+                            <HiLogout size={35} color="white" />
+                            {
+                                signOutTablet ? 
+                                <p className="text-sm font-semibold text-neutral-100">Tablet signed out.</p>
+                                : <p className="text-sm font-semibold text-neutral-100">Click to sign out Tablet</p>
+                            }
                         </div>
                     </div>
                 </div>

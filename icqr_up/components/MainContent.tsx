@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
 import SignInRightContent from "./SignInRightContent";
 import { db } from "@/firebase/config";
-import { SignOutType, SignUpType, timeStampType } from "@/types";
-import { collection, query, limit, getDocs, addDoc, where } from "firebase/firestore";
+import { tablet_sign_outs, tablet_sign_ups, timeStampType, vr_sign_outs } from "@/types";
+import { collection, query, limit, getDocs, orderBy } from "firebase/firestore";
 import { toast } from "react-toastify";
 import SignOutRightContent from "./SignOutRightContent";
-import axios from "axios";
+import { CheckOut } from "@/services/checkout";
+import { SignUp } from "@/services/signup";
 
 const MainContent = () => {
     const [mode, setMode] = useState<"sign-out" | "sign-up">("sign-up");
@@ -19,153 +20,74 @@ const MainContent = () => {
     const [checkVr, setCheckVr] = useState(false);
     const [signOutVR, setSignOutVR] = useState<Boolean>(false);
     const [signOutTablet, setSignOutTablet] = useState<Boolean>(false);
-const [latestTabletTime, setLatestTabletTime] = useState<timeStampType>({seconds: 0, nanoseconds: 0});
-    const [latestVRTime, setLatestVRTime] = useState<timeStampType>({seconds: 0, nanoseconds: 0});
-    const signOutCollectionRef = collection(db, "sign_outs");
-    const signUpCollectionRef = collection(db, "sign_ups");
+    const [latestTabletTime, setLatestTabletTime] = useState<timeStampType>({ seconds: 0, nanoseconds: 0 });
+    const [latestVRTime, setLatestVRTime] = useState<timeStampType>({ seconds: 0, nanoseconds: 0 });
+    const tabletSIgnOutsCollectionRef = collection(db, "tablet_sign_outs");
+    const vrSignOutsCollectionRef = collection(db, "vr_sign_outs");
 
 
     useEffect(() => {
         const getLatestSignOut = async () => {
-            const q = query(signOutCollectionRef, limit(1));
-            const querySnapshot = await getDocs(q);
-            const latestSignOutDoc = querySnapshot.docs[0].data();
+            const tabletSignOutQuery = query(tabletSIgnOutsCollectionRef, limit(1), orderBy("created_at", "desc"));
+            const vrSignOutQuery = query(vrSignOutsCollectionRef, limit(1), orderBy("created_at", "desc"));
+            const tabletQuerySnapshot = await getDocs(tabletSignOutQuery);
+            const vrQuerySnapshot = await getDocs(vrSignOutQuery);
+            
+            const tabletData = tabletQuerySnapshot.docs[0].data() as tablet_sign_outs;
+            const vrData = vrQuerySnapshot.docs[0].data() as vr_sign_outs;
 
-            const { vr_stop_time, tablet_stop_time } = latestSignOutDoc as SignOutType;
+            const tabletSignOutTime = tabletData.time;
+            const vrSignOutTime = vrData.time;
 
-            setLatestVRTime(vr_stop_time);
-            setLatestTabletTime(tablet_stop_time);
+            setLatestTabletTime(tabletSignOutTime);
+            setLatestVRTime(vrSignOutTime);
         }
 
         getLatestSignOut();
-    }, [tabletTime, vrTime]);
+    }, [tabletTime, vrTime, checkTablet, checkVr]);
 
 
     const handleSignOut = useCallback(async () => {
         // first check if devices are available
-        if (email.length === 0 || fullName.length === 0 || studentId.length === 0) {
-            toast.error("Please fill in all the fields");
+        if (email.length === 0 || fullName.length === 0 || studentId.length !== 6 || (!signOutTablet && !signOutVR)) {
+            toast.error("Please fill in all the fields correctly");
             return;
         }
 
         toast.loading("Signing out for devices");
-
-        await checkOut();
+        await CheckOut(
+            email,
+            fullName,
+            studentId,
+            signOutTablet,
+            signOutVR,
+        );
     }, [email, fullName, studentId]);
 
-
-    const checkOut = async () => {
-        try {
-            const querySignUps = query(signUpCollectionRef, where("email", "==", email), limit(1));
-            const querySnapshot = await getDocs(querySignUps);
-            if (querySnapshot.docs.length === 0) {
-                toast.error("You haven't signed up for devices yet");
-                return;
-            }
-            const latestSignOutDoc = querySnapshot.docs[0].data() as SignOutType;
-
-            const { tablet, vr } = latestSignOutDoc;
-
-            if (tablet !== signOutTablet) {
-                toast.error("You have not signed out for tablet");
-            }
-            if (vr !== signOutVR) {
-                toast.error("You have not signed out for VR");
-            }
-
-            const sign_out_data = {
-                email,
-                full_name: fullName,
-                student_id: studentId,
-                tablet: signOutTablet,
-                vr: signOutVR,
-                tablet_stop_time: new Date(),
-                vr_stop_time: new Date(),
-                agree: true,
-            };
-
-            await addDoc(signOutCollectionRef, sign_out_data);
-            toast.done("Successfully signed out for devices. Check your email for confirmation");
-
-            await axios.post("/api/signout", {
-                email,
-                fullName,
-                signOutTablet,
-                signOutVR,
-            })
-        } catch (error) {
-            console.log(error);
-            toast.error("Something went wrong");
-        } finally {
-            toast.dismiss();
-            toast.success("Successfully signed out for devices. Check your email for confirmation");
-        }
-    };
 
 
     const handleSignUp = useCallback(async () => {
         // first check if devices are available
-        if (email.length === 0 || fullName.length === 0 || studentId.length === 0 || (!checkTablet && !checkVr)) {
+        if (!checked || email.length === 0 || fullName.length === 0 || studentId.length !== 6 || (!checkTablet && !checkVr)) {
             toast.error("Please fill in all the fields");
             return;
         }
         toast.loading("Siging up for device");
-        await checkIfAvailable();
+        await SignUp(
+            email,
+            fullName,
+            studentId,
+            checkTablet,
+            checkVr,
+            tabletTime,
+            vrTime,
+            latestTabletTime,
+            latestVRTime,
+            checked,
+        )
 
     }, [email, fullName, studentId, checked, checkTablet, checkVr, tabletTime, vrTime]);
 
-
-    const checkIfAvailable = async () => {
-        try {
-            // if the latest signout time is less than the requested signup time, then the device is available
-            const sign_up_data = {
-                email,
-                full_name: fullName,
-                student_id: studentId,
-                tablet: checkTablet,
-                vr: checkVr,
-                tablet_start_time: checkTablet ? tabletTime : null,
-                vr_start_time: checkVr ? vrTime : null,
-                agree: checked,
-            } as SignUpType;
-
-            let postItCount = 0;
-
-            if (checkTablet) {
-                if (new Date(latestTabletTime.seconds * 1000 + latestTabletTime.nanoseconds / 1000000) < tabletTime) {
-                    postItCount += 1;
-                } else {
-                    toast.error("Tablet is not available at this time");
-                }
-            }
-
-            if (checkVr) {
-                if (new Date(latestVRTime.seconds * 1000 + latestVRTime.nanoseconds / 1000000) < vrTime) {
-                    postItCount += 1;
-                } else {
-                    toast.error("VR is not available at this time");
-                }
-            }
-
-            if (postItCount > 0) {
-                await addDoc(signUpCollectionRef, sign_up_data)
-                toast.done("Successfully signed up for devices. Check your email for confirmation");
-                await axios.post("/api/signup", {
-                    email,
-                    fullName,
-                    checkTablet,
-                    checkVr,
-                })
-            } else toast.error("Devices are not available at this time");
-
-        } catch (error) {
-            toast.error("Something went wrong");
-            console.log(error);
-        } finally {
-            toast.dismiss();
-            toast.success("Successfully signed up for devices. Check your email for confirmation");
-        }
-    }
 
     const modes = {
         "sign-up": <SignInRightContent
@@ -204,7 +126,7 @@ const [latestTabletTime, setLatestTabletTime] = useState<timeStampType>({seconds
 
     return (
         <div
-            className="h-full w-full flex flex-col py-5 gap-10 justify-center items-center md:px-8 px-4 overflow-y-scroll transition-all duration-200">
+            className="h-full w-full flex flex-col py-5 gap-10 justify-center items-center md:px-8 px-4 overflow-y-scroll transition-all duration-500 ">
             {modes[mode]}
             <div className="w-full flex flex-row gap-3">
                 <button

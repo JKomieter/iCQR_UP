@@ -24,7 +24,7 @@ const UserInfo = ({
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full  rounded-md px-3 py-2 shadow-md"
+                    className="w-full rounded-md p-3 shadow-md border-2 border-neutral-200 bg-white"
                     placeholder="Enter your email"
                     required
                 />
@@ -35,7 +35,7 @@ const UserInfo = ({
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full  rounded-md px-3 py-2 shadow-md"
+                    className="w-full rounded-md p-3 shadow-md border-2 border-neutral-200 bg-white"
                     placeholder="Enter your full name"
                     required
                 />
@@ -46,7 +46,7 @@ const UserInfo = ({
                     type="text"
                     value={studentId}
                     onChange={(e) => setStudentId(e.target.value)}
-                    className="w-full  rounded-md px-3 py-2 shadow-md"
+                    className="w-full rounded-md p-3 shadow-md border-2 border-neutral-200 bg-white"
                     placeholder="Enter your student ID"
                     required
                 />

@@ -1,28 +1,44 @@
 
 
-export type SignUpType = {
-    email: string;
-    full_name: string;
-    student_id: string;
-    tablet: boolean;
-    vr: boolean;
-    tablet_start_time: Date;
-    vr_start_time: Date;
-    agree: boolean;
-}
-
 export type timeStampType = {
     seconds: number;
     nanoseconds: number;
 };
 
-export type SignOutType = {
+export type tablet_sign_ups = {
+    id?: string;
     email: string;
     full_name: string;
     student_id: string;
-    tablet: boolean;
-    vr: boolean;
-    tablet_stop_time: timeStampType;
-    vr_stop_time: timeStampType;
+    time: timeStampType;
+    created_at: timeStampType;
     agree: boolean;
+}
+
+export type vr_sign_ups = {
+    id?: string;
+    email: string;
+    full_name: string;
+    student_id: string;
+    time: timeStampType;
+    created_at: timeStampType;
+    agree: boolean;
+}
+
+export type tablet_sign_outs = {
+    id?: string;
+    email: string;
+    full_name: string;
+    student_id: string;
+    time: timeStampType;
+    created_at: timeStampType;
+}
+
+export type vr_sign_outs = {
+    id?: string;
+    email: string;
+    full_name: string;
+    student_id: string;
+    time: timeStampType;
+    created_at: timeStampType;
 }

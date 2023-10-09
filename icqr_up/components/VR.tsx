@@ -19,19 +19,20 @@ const VR = ({
     setCheckVr: React.Dispatch<React.SetStateAction<boolean>>;
     latestVRTime: timeStampType;
 }) => {
+    console.log(latestVRTime);
     const IsAvailable = useMemo(() => {
         if (checkVr) {
-            if (new Date(latestVRTime.seconds * 1000 + latestVRTime.nanoseconds / 1000000) < vrTime) {
-                return <p className="text-xs md:text-sm text-green-600">VR is available</p>
+            if (new Date(latestVRTime?.seconds * 1000 + latestVRTime?.nanoseconds / 1000000) < vrTime) {
+                return <p className="text-sm md:text-base font-semibold text-green-600">VR is available</p>
             } else {
-                return <p className="text-xs md:text-sm text-red-600">VR is not available</p>
+                return <p className="text-sm md:text-base font-semibold text-red-600">VR is not available</p>
             }
         }
     }, [checkVr, latestVRTime, vrTime]);
 
     return (
         <div
-            className="bg-white p-3 w-full rounded-lg shadow-md flex flex-row items-start gap-3"
+            className="bg-white p-3 w-full rounded-lg shadow-md flex flex-row items-start gap-3 border-2 border-neutral-200"
         >
             <div className="h-full">
                 <Image

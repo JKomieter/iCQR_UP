@@ -1,7 +1,6 @@
 import { Image } from "@nextui-org/react"
 import PickTime from "./PickTime"
 import { Checkbox } from "@mui/material";
-import { useMemo } from "react";
 import { timeStampType } from "@/types";
 
 const Tablet = ({
@@ -20,9 +19,9 @@ const Tablet = ({
     const IsAvailable = () => {
         if (checkTablet) {
             if (new Date(latestTabletTIme.seconds * 1000 + latestTabletTIme.nanoseconds / 1000000) < tabletTime) {
-                return <p className="text-xs md:text-sm text-green-600">Tablet is available</p>
+                return <p className="text-sm md:text-base font-semibold text-green-600">Tablet is available</p>
             } else {
-                return <p className="text-xs md:text-sm text-red-600">Tablet is not available</p>
+                return <p className="text-sm md:text-base font-semibold text-red-600">Tablet is not available</p>
             }
         }
     };
@@ -30,7 +29,7 @@ const Tablet = ({
 
     return (
         <div
-            className="bg-white p-3 w-full rounded-lg shadow-md flex flex-row items-start gap-3"
+            className="bg-white p-3 w-full rounded-lg shadow-md flex flex-row items-start gap-3 border-2 border-neutral-200"
         >
             <div className=" h-full">
                 <Image
