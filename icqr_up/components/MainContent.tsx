@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import SignInRightContent from "./SignInRightContent";
 import { db } from "@/firebase/config";
-import { tablet_sign_outs, tablet_sign_ups, timeStampType, vr_sign_outs } from "@/types";
+import { tablet_sign_outs, timeStampType, vr_sign_outs } from "@/types";
 import { collection, query, limit, getDocs, orderBy } from "firebase/firestore";
 import { toast } from "react-toastify";
 import SignOutRightContent from "./SignOutRightContent";

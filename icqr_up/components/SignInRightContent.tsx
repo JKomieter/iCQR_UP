@@ -1,12 +1,8 @@
 "use client";
 import Devices from "./Devices";
-import { useCallback, useState } from "react";
 import { Checkbox } from "@mui/material";
-import { addDoc, collection, getDocs, limit, query } from "firebase/firestore";
-import { db } from "@/firebase/config";
-import { SignOutType, SignUpType, timeStampType } from "@/types";
+import { timeStampType } from "@/types";
 import UserInfo from "./UserInfo";
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
