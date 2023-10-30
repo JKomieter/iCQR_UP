@@ -7,9 +7,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 export default function Home() {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <div className="w-full h-full overflow-y-hidden">
         <Content />
-      </div>
     </LocalizationProvider>
   )
 }

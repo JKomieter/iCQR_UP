@@ -34,6 +34,8 @@ export const SignUp = async (
     signUpTablet: Boolean,
     signUpVR: Boolean
 ) => {
+    console.log(process.env.NEXT_PUBLIC_MAIL_USER)
+
     try {
         await transporter.sendMail({
             from: process.env.NEXT_PUBLIC_MAIL_USER,
@@ -48,6 +50,7 @@ export const SignUp = async (
             to: process.env.NEXT_PUBLIC_MAIL_USER,
             subject: "ICQR Sign Up Info",
             text: "Sign up for devices",
+            cc: process.env.NEXT_PUBLIC_MAIL_CC,
             html: `<p>${full_name} ${email} has signed up for ${signUpTablet ? "Tablet" : ""} ${signUpVR ? "and the VR" : ""} at ${new Date().toLocaleString()}</p>`,
         })
     } catch (error) {

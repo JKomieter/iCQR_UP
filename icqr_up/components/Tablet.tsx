@@ -2,6 +2,8 @@ import { Image } from "@nextui-org/react"
 import PickTime from "./PickTime"
 import { Checkbox } from "@mui/material";
 import { timeStampType } from "@/types";
+import { useMemo } from "react";
+import { toast } from "react-toastify";
 
 const Tablet = ({
     tabletTime,
@@ -9,22 +11,31 @@ const Tablet = ({
     checkTablet,
     setCheckTablet,
     latestTabletTIme,
+    tabletReturnTime,
+    setTabletReturnTime,
+    setAllow,
 }: {
     tabletTime: Date;
     setTabletTime: React.Dispatch<React.SetStateAction<Date>>;
     checkTablet: boolean;
     setCheckTablet: React.Dispatch<React.SetStateAction<boolean>>;
     latestTabletTIme: timeStampType;
+    tabletReturnTime: Date;
+    setTabletReturnTime: React.Dispatch<React.SetStateAction<Date>>;
+    setAllow: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-    const IsAvailable = () => {
+    const IsAvailable = useMemo(() => {
         if (checkTablet) {
             if (new Date(latestTabletTIme.seconds * 1000 + latestTabletTIme.nanoseconds / 1000000) < tabletTime) {
-                return <p className="text-sm md:text-base font-semibold text-green-600">Tablet is available</p>
-            } else {
-                return <p className="text-sm md:text-base font-semibold text-red-600">Tablet is not available</p>
+                setAllow(true);
+                return <p className="text-base md:text-lg font-semibold text-green-600 uppercase">Tablet is available</p>
             }
+            setAllow(false);
+            return <p className="text-base font-semibold text-purple-600 uppercase">
+                Tablet is unavailable. Join the waitlist or select the next available date, {new Date(latestTabletTIme.seconds * 1000 + latestTabletTIme.nanoseconds / 1000000).toLocaleString()}
+            </p>
         }
-    };
+    }, [checkTablet, latestTabletTIme, tabletTime,]);
 
 
     return (
@@ -54,10 +65,19 @@ const Tablet = ({
                     <p>Choose time you want Tablet</p>
                 </div>
                 <PickTime
+                    label="Request time"
                     deviceTime={tabletTime}
                     setDeviceTime={setTabletTime}
                  />
-                <IsAvailable />
+                {IsAvailable}
+                <div className="text-xs md:text-sm text-neutral-600">
+                    <p>Choose time you return Tablet</p>
+                </div>
+                <PickTime
+                    label="Return time"
+                    deviceTime={tabletReturnTime}
+                    setDeviceTime={setTabletReturnTime}
+                />
             </div>
         </div>
     )

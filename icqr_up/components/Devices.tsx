@@ -13,6 +13,11 @@ const Devices = ({
     setCheckVr,
     latestTabletTime,
     latestVRTime,
+    tabletReturnTime,
+    setTabletReturnTime,
+    vrReturnTime,
+    setVrReturnTime,
+    setAllow,
 }: {
     vrTime: Date;
     tabletTime: Date;
@@ -24,6 +29,11 @@ const Devices = ({
     setCheckVr: React.Dispatch<React.SetStateAction<boolean>>;
     latestTabletTime: timeStampType;
     latestVRTime: timeStampType;
+    tabletReturnTime: Date;
+    setTabletReturnTime: React.Dispatch<React.SetStateAction<Date>>;
+    vrReturnTime: Date;
+    setVrReturnTime: React.Dispatch<React.SetStateAction<Date>>;
+    setAllow: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
 
     return (
@@ -34,6 +44,9 @@ const Devices = ({
             checkVr={checkVr}
             setCheckVr={setCheckVr}
             latestVRTime={latestVRTime}
+            vrReturnTime={vrReturnTime}
+            setVrReturnTime={setVrReturnTime}
+            setAllow={setAllow}
             />
             <Tablet 
             tabletTime={tabletTime} 
@@ -41,6 +54,9 @@ const Devices = ({
             checkTablet={checkTablet}
             setCheckTablet={setCheckTablet}
             latestTabletTIme={latestTabletTime}
+            tabletReturnTime={tabletReturnTime}
+            setTabletReturnTime={setTabletReturnTime}
+            setAllow={setAllow}
             />
         </div>
     )

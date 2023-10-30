@@ -26,6 +26,11 @@ const SignInRightContent = ({
     setChecked,
     latestTabletTime,
     latestVRTime,
+    tabletReturnTime,
+    setTabletReturnTime,
+    vrReturnTime,
+    setVrReturnTime,
+    setAllow,
 }: {
     email: string;
     setEmail: React.Dispatch<React.SetStateAction<string>>;
@@ -45,6 +50,11 @@ const SignInRightContent = ({
     setChecked: React.Dispatch<React.SetStateAction<boolean>>;
     latestTabletTime: timeStampType;
     latestVRTime: timeStampType;
+    tabletReturnTime: Date;
+    setTabletReturnTime: React.Dispatch<React.SetStateAction<Date>>;
+    vrReturnTime: Date;
+    setVrReturnTime: React.Dispatch<React.SetStateAction<Date>>;
+    setAllow: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
     
 
@@ -72,6 +82,11 @@ const SignInRightContent = ({
                 setCheckVr={setCheckVr}
                 latestTabletTime={latestTabletTime}
                 latestVRTime={latestVRTime}
+                tabletReturnTime={tabletReturnTime}
+                setTabletReturnTime={setTabletReturnTime}
+                vrReturnTime={vrReturnTime}
+                setVrReturnTime={setVrReturnTime}
+                setAllow={setAllow}
             />
             <div className="w-full text-xs md:text-sm">
                 <Checkbox

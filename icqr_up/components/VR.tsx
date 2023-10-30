@@ -1,8 +1,9 @@
 import { Image } from "@nextui-org/react";
 import PickTime from "./PickTime";
 import { Checkbox } from "@mui/material";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { timeStampType } from "@/types";
+import { toast } from "react-toastify";
 
 
 
@@ -12,23 +13,33 @@ const VR = ({
     checkVr,
     setCheckVr,
     latestVRTime,
+    vrReturnTime,
+    setVrReturnTime,
+    setAllow,
 }: {
     vrTime: Date;
     setVrTime: React.Dispatch<React.SetStateAction<Date>>;
     checkVr: boolean;
     setCheckVr: React.Dispatch<React.SetStateAction<boolean>>;
     latestVRTime: timeStampType;
+    vrReturnTime: Date;
+    setVrReturnTime: React.Dispatch<React.SetStateAction<Date>>;
+    setAllow: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-    console.log(latestVRTime);
+
     const IsAvailable = useMemo(() => {
         if (checkVr) {
             if (new Date(latestVRTime?.seconds * 1000 + latestVRTime?.nanoseconds / 1000000) < vrTime) {
-                return <p className="text-sm md:text-base font-semibold text-green-600">VR is available</p>
-            } else {
-                return <p className="text-sm md:text-base font-semibold text-red-600">VR is not available</p>
+                setAllow(true);
+                return <p className="text-base md:text-lg font-semibold text-green-600 uppercase">VR is available</p>
             }
+            setAllow(false);
+            return <p className="text-base font-semibold text-purple-600 uppercase">
+                VR is unavailable for the selected time. Join the waitlist or select the next available date, {new Date(latestVRTime?.seconds * 1000 + latestVRTime?.nanoseconds / 1000000).toLocaleString()}
+            </p>
         }
-    }, [checkVr, latestVRTime, vrTime]);
+    }, [vrTime, checkVr]);
+
 
     return (
         <div
@@ -48,7 +59,9 @@ const VR = ({
                     <h4 className="text-base font-semibold w-full text-left uppercase text-neutral-700">VR</h4>
                     <Checkbox
                         value={checkVr}
-                        onChange={(e) => setCheckVr(e.target.checked)}
+                        onChange={(e) => {
+                            setCheckVr(e.target.checked)
+                        }}
                         defaultChecked={false}
                         color="primary"
                     />
@@ -57,10 +70,19 @@ const VR = ({
                     <p>Choose time you want VR</p>
                 </div>
                 <PickTime
-                deviceTime={vrTime}
-                setDeviceTime={setVrTime}
+                    label="Request time"
+                    deviceTime={vrTime}
+                    setDeviceTime={setVrTime}
                 />
                 {IsAvailable}
+                <div className="text-xs md:text-sm text-neutral-600">
+                    <p>Choose time you return VR</p>
+                </div>
+                <PickTime
+                    label="Return time"
+                    deviceTime={vrReturnTime}
+                    setDeviceTime={setVrReturnTime}
+                />
             </div>
         </div>
     )

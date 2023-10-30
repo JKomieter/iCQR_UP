@@ -11,6 +11,7 @@ const checkAndAddSignUp = async (
     studentId: string,
     requestTime: Date,
     latestTime: timeStampType,
+    deviceReturnTime: Date,
     agreed: Boolean,
 ) => {
     if (new Date(latestTime.seconds * 1000 + latestTime.nanoseconds / 1000000) < requestTime) {
@@ -18,8 +19,9 @@ const checkAndAddSignUp = async (
             email,
             full_name: fullName,
             student_id: studentId,
-            time: requestTime,
+            time: requestTime, 
             created_at: latestTime,
+            return_time: deviceReturnTime,
             agree: agreed,
         });
     }
@@ -35,6 +37,8 @@ export const SignUp = async (
     vrTime: Date,
     latestTabletTime: timeStampType,
     latestVRTime: timeStampType,
+    tabletReturnTime: Date,
+    vrReturnTime: Date,
     agreedToTerms: boolean
 ) => {
     try {
@@ -42,11 +46,29 @@ export const SignUp = async (
         const vrSignUpsCollectionRef = collection(db, "vr_sign_ups");
 
         if (checkTablet) {
-            await checkAndAddSignUp(tabletSignUpsCollectionRef, email, fullName, studentId, tabletTime, latestTabletTime, agreedToTerms);
+            await checkAndAddSignUp(
+                tabletSignUpsCollectionRef,
+                email,
+                fullName,
+                studentId,
+                tabletTime,
+                latestTabletTime,
+                tabletReturnTime,
+                agreedToTerms
+            );
         }
 
         if (checkVr) {
-            await checkAndAddSignUp(vrSignUpsCollectionRef, email, fullName, studentId, vrTime, latestVRTime, agreedToTerms);
+            await checkAndAddSignUp(
+                vrSignUpsCollectionRef, 
+                email, 
+                fullName, 
+                studentId, 
+                vrTime, 
+                latestVRTime, 
+                vrReturnTime,
+                agreedToTerms
+            );
         }
 
         await axios.post("/api/signup", {
